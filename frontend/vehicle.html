@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1"
+    >
+
+    <title>
+        Vehicle Sage - Vehicles
+    </title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body{
+            background:#dbe3e8;
+            font-family:'Poppins',sans-serif;
+        }
+
+        .panel{
+            background:white;
+            border-radius:28px;
+            box-shadow:0 8px 30px rgba(0,0,0,.08);
+        }
+
+    </style>
+
+</head>
+
+<body class="p-6">
+
+<div class="max-w-7xl mx-auto">
+
+    <div
+        class="panel p-6 mb-6 flex justify-between items-center"
+    >
+
+        <div>
+
+            <h1
+                class="text-4xl font-bold"
+            >
+                Vehicles
+            </h1>
+
+            <p
+                class="text-gray-400"
+            >
+                Registered vehicles
+            </p>
+
+        </div>
+
+        <button onclick="history.back()"
+                class="bg-slate-900 text-white px-6 py-3 rounded-xl"
+                >
+                 Back
+        </button>
+
+    </div>
+
+
+
+    <div
+        class="panel p-6"
+    >
+
+        <table
+            class="w-full table-fixed"
+        >
+
+            <thead
+                class="border-b text-gray-400"
+            >
+
+                <tr>
+
+                    <th class="p-4 text-left">
+                        Vehicle ID
+                    </th>
+
+                    <th class="p-4 text-left">
+                        Model
+                    </th>
+
+                    <th class="p-4 text-center">
+                        Type
+                    </th>
+
+                    <th class="p-4 text-center">
+                        Class
+                    </th>
+
+                    <th class="p-4 text-center">
+                        Year
+                    </th>
+
+                    <th class="p-4 text-center">
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody
+                id="vehicleTable"
+            >
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function loadVehicles(){
+
+    try{
+
+        const token =
+        localStorage.getItem(
+            "access_token"
+        );
+
+        const response =
+        await fetch(
+            "http://localhost:8000/my_vehicles",
+            {
+
+                headers:{
+
+                    Authorization:
+                    `Bearer ${token}`
+
+                }
+
+            }
+        );
+
+        const vehicles =
+        await response.json();
+
+        let rows='';
+
+        vehicles.forEach(v=>{
+
+            rows += `
+
+            <tr
+                class="border-b hover:bg-gray-50"
+            >
+
+                <td class="p-5">
+
+                    ${v.vehicle_id}
+
+                </td>
+
+                <td class="p-5">
+
+                    ${v.vehicle_model}
+
+                </td>
+
+                <td class="p-5 text-center">
+
+                    ${v.vehicle_type}
+
+                </td>
+
+                <td class="p-5 text-center">
+
+                    ${v.vehicle_class}
+
+                </td>
+
+                <td class="p-5 text-center">
+
+                    ${v.year_bought}
+
+                </td>
+
+                <td class="p-5">
+
+                    <div
+                        class="flex justify-center gap-3"
+                    >
+
+                        <button
+                            onclick="
+                            viewTelemetry(
+                            '${v.vehicle_id}'
+                            )
+                            "
+                            class="bg-cyan-500 text-white px-4 py-2 rounded-xl"
+                        >
+
+                            View
+
+                        </button>
+
+
+                        <button
+                            onclick="
+                            deleteVehicle(
+                            '${v.vehicle_id}'
+                            )
+                            "
+                            class="bg-red-500 text-white px-4 py-2 rounded-xl"
+                        >
+
+                            Delete
+
+                        </button>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            `;
+
+        });
+
+        document.getElementById(
+            "vehicleTable"
+        ).innerHTML = rows;
+
+    }
+
+    catch(err){
+
+        console.log(
+            err
+        );
+
+    }
+
+}
+
+
+
+function viewTelemetry(
+    vehicleId
+){
+
+    window.location.href=
+    `view_user_telemetry.html?vehicle_id=${vehicleId}`;
+
+}
+
+
+
+async function deleteVehicle(
+    vehicleId
+){
+
+    const token=
+    localStorage.getItem(
+        "access_token"
+    );
+
+    await fetch(
+        `http://localhost:8000/delete_vehicle/${vehicleId}`,
+        {
+
+            method:"DELETE",
+
+            headers:{
+
+                Authorization:
+                `Bearer ${token}`
+
+            }
+
+        }
+    );
+
+    loadVehicles();
+
+}
+
+
+loadVehicles();
+
+</script>
+
+</body>
+
+</html>

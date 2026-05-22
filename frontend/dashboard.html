@@ -1,0 +1,505 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Vehicle Sage Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:'Inter',sans-serif;
+background:#071018;
+color:white;
+overflow-x:hidden;
+}
+
+.orbitron{
+font-family:'Orbitron',sans-serif;
+}
+
+.card{
+background:rgba(13,22,35,.8);
+border:1px solid rgba(0,229,168,.15);
+backdrop-filter:blur(10px);
+border-radius:24px;
+box-shadow:
+0 0 15px rgba(0,229,168,.08);
+}
+
+.glow{
+box-shadow:
+0 0 10px rgba(0,229,168,.25),
+0 0 25px rgba(0,212,255,.1);
+}
+
+.metric{
+color:#00E5A8;
+text-shadow:0 0 15px rgba(0,229,168,.6);
+}
+
+.gold{
+color:#F5C451;
+}
+
+.bg-grid{
+background:
+linear-gradient(
+rgba(255,255,255,.02) 1px,
+transparent 1px
+),
+linear-gradient(
+90deg,
+rgba(255,255,255,.02) 1px,
+transparent 1px
+);
+
+background-size:40px 40px;
+}
+
+.control-btn:hover{
+transform:translateY(-3px);
+transition:.3s;
+}
+
+</style>
+
+</head>
+
+<body class="bg-grid">
+
+<!-- Navbar -->
+
+<header class="flex justify-between items-center px-12 py-8">
+
+<div class="flex items-center gap-4">
+
+<img src="images/logo.png"
+class="w-14">
+
+<div>
+
+<h1 class="orbitron text-2xl font-bold">
+Vehicle Sage
+</h1>
+
+<p class="text-xs text-gray-400">
+Est. 2024
+</p>
+
+</div>
+
+</div>
+
+
+<nav class="flex gap-10 text-gray-300">
+
+<a href="#" class="hover:text-cyan-400">
+Dashboard
+</a>
+
+<a href="#">
+Analytics
+</a>
+
+<a href="#">
+Vehicles
+</a>
+
+<a href="#">
+Settings
+</a>
+
+</nav>
+
+</header>
+
+
+<!-- Hero -->
+
+<section
+class="px-12 py-8 grid md:grid-cols-2 gap-8 items-center">
+
+<div>
+
+<h1
+class="orbitron text-6xl leading-tight font-bold">
+
+Drive Smarter With <span class="metric">
+Vehicle Intelligence
+</span>
+
+</h1>
+
+<p class="mt-6 text-gray-400 text-lg">
+
+Monitor performance, optimize efficiency,
+and unlock real-time telemetry insights.
+
+</p>
+
+<div class="mt-8 flex gap-5">
+
+<button
+class="px-8 py-4 rounded-xl bg-cyan-500 glow">
+
+Launch Dashboard
+
+</button>
+
+<button
+class="px-8 py-4 rounded-xl border border-cyan-400">
+
+Explore Features
+
+</button>
+
+</div>
+
+</div>
+
+
+<div class="relative">
+
+<img
+src="images/car.png"
+class="w-full">
+
+<div
+class="absolute top-10 left-0 card p-5">
+
+<p class="text-gray-400">
+Battery
+</p>
+
+<h2 class="metric text-3xl">
+74%
+</h2>
+
+</div>
+
+
+<div
+class="absolute bottom-10 right-0 card p-5">
+
+<p class="text-gray-400">
+Range
+</p>
+
+<h2 class="gold text-3xl">
+315 km
+</h2>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- Metrics -->
+
+<section
+class="px-12 py-8 grid md:grid-cols-5 gap-6">
+
+<div class="card p-6">
+
+<p class="text-gray-400">
+Power Consumption
+</p>
+
+<h2 class="metric text-3xl">
+4.7 kWh
+</h2>
+
+</div>
+
+
+<div class="card p-6">
+
+<p class="text-gray-400">
+Cabin Temp
+</p>
+
+<h2 class="metric text-3xl">
+22°C
+</h2>
+
+</div>
+
+
+<div class="card p-6">
+
+<p class="text-gray-400">
+Efficiency
+</p>
+
+<h2 class="metric text-3xl">
+91%
+</h2>
+
+</div>
+
+
+<div class="card p-6">
+
+<p class="text-gray-400">
+System Health
+</p>
+
+<h2 class="gold text-3xl">
+OPTIMAL
+</h2>
+
+</div>
+
+
+<div class="card p-6">
+
+<p class="text-gray-400">
+LF Tire
+</p>
+
+<h2 class="metric text-3xl">
+33 PSI
+</h2>
+
+</div>
+
+</section>
+
+
+<!-- Diagnostics -->
+
+<section
+class="px-12 py-8">
+
+<h2
+class="orbitron text-3xl mb-8">
+
+Vehicle Insights &
+Diagnostics
+
+</h2>
+
+
+<div class="grid md:grid-cols-4 gap-6">
+
+<div class="card p-6">
+
+<h3 class="text-gray-400">
+Battery Remaining
+</h3>
+
+<h2 class="metric text-4xl">
+74%
+</h2>
+
+</div>
+
+<div class="card p-6">
+
+<h3 class="text-gray-400">
+GPS FIX
+</h3>
+
+<h2 class="metric text-4xl">
+OK
+</h2>
+
+</div>
+
+<div class="card p-6">
+
+<h3 class="text-gray-400">
+Data Uplink
+</h3>
+
+<h2 class="metric text-4xl">
+SYNCED
+</h2>
+
+</div>
+
+<div class="card p-6">
+
+<h3 class="text-gray-400">
+Temperature
+</h3>
+
+<h2 class="gold text-4xl">
+28°C
+</h2>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- Control Cards -->
+
+<section
+class="px-12 py-8">
+
+<h2
+class="orbitron text-3xl mb-8">
+
+Control Modes
+
+</h2>
+
+
+<div class="grid md:grid-cols-4 gap-6">
+
+<div class="card p-6">
+
+<h3>ECO MODE</h3>
+
+<button
+class="control-btn mt-6 px-5 py-3 rounded-lg bg-green-500 glow">
+
+Activate
+
+</button>
+
+</div>
+
+
+<div class="card p-6">
+
+<h3>CLIMATE</h3>
+
+<button
+class="control-btn mt-6 px-5 py-3 rounded-lg bg-cyan-500 glow">
+
+Adjust
+
+</button>
+
+</div>
+
+
+<div class="card p-6">
+
+<h3>AUDIO</h3>
+
+<button
+class="control-btn mt-6 px-5 py-3 rounded-lg bg-yellow-500 glow">
+
+Open
+
+</button>
+
+</div>
+
+
+<div class="card p-6">
+
+<h3>DIAGNOSTICS</h3>
+
+<button
+class="control-btn mt-6 px-5 py-3 rounded-lg bg-purple-500 glow">
+
+View
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- Navigation -->
+
+<section
+class="px-12 py-8">
+
+<div
+class="card p-8">
+
+<h2
+class="orbitron text-3xl mb-6">
+
+Intelligent Navigation
+
+</h2>
+
+<div
+class="h-[300px]
+rounded-xl
+bg-gradient-to-r
+from-cyan-900
+to-blue-950
+flex items-center justify-center">
+
+<div class="text-center">
+
+<h2 class="metric text-4xl">
+12 km
+</h2>
+
+<p class="text-gray-300">
+to Destination
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<footer
+class="mt-20 px-12 py-8 border-t border-gray-800">
+
+<div
+class="flex justify-between">
+
+<div class="flex items-center gap-4">
+
+<img src="images/logo.png"
+class="w-10">
+
+<div>
+
+<h3 class="orbitron">
+Vehicle Sage
+</h3>
+
+<p class="text-gray-500">
+
+© Vehicle Sage. Est. 2024
+
+</p>
+
+</div>
+
+</div>
+
+<div class="text-gray-500">
+
+Real-Time Telemetry Intelligence
+
+</div>
+
+</div>
+
+</footer>
+
+
+</body>
+</html>
+```

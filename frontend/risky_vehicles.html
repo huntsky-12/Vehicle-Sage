@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1"
+    >
+    <title>
+        Vehicle Sage - Risky Vehicles
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+    <style>
+        body{
+            background:#dbe3e8;
+            font-family:'Poppins',sans-serif;
+        }
+        .panel{
+            background:white;
+            border-radius:28px;
+            box-shadow:0 8px 30px rgba(0,0,0,.08);
+        }
+    </style>
+
+</head>
+
+<body class="p-6">
+
+<div class="max-w-7xl mx-auto">
+    <div class="panel p-6 mb-6">
+        <h1 class="text-4xl font-bold">Risky Vehicles
+
+        </h1>
+
+        <p class="text-gray-400">
+                 Vehicles with highest alert activity
+        </p>
+    </div>
+
+    <div class="panel p-6" >
+
+        <table class="w-full table-fixed">
+            <thead class="border-b text-gray-400">
+                <tr>
+                    <th class="p-4 text-left">
+                         Vehicle ID
+                    </th>
+                    <th class="p-4 text-center">
+                        Total Alerts
+                    </th>
+                    <th class="p-4 text-center">
+                        Risk Level
+                    </th>
+                    <th class="p-4 text-center">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="riskTable">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script>
+async function loadRiskyVehicles(){
+    try{
+        const token=localStorage.getItem(
+            "access_token"
+        );
+        const response=await fetch( "http://localhost:8000/risky_vehicles", {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }
+        );
+        const data=
+        await response.json();
+
+        let rows='';
+        data.forEach(v=>{
+            let risk= "Low";
+            let color="bg-green-500";
+            if(v.alert_count > 10){
+                risk="High";
+                color="bg-red-500";
+            }
+            else if(v.alert_count > 5){
+                risk= "Medium";
+                color="bg-yellow-500";
+            }
+            rows += `
+            <tr class="border-b hover:bg-gray-50">
+                <td class="p-5">
+                    ${v.vehicle_id}
+                </td>
+
+                <td class="p-5 text-center">
+                    ${v.alert_count}
+                </td>
+                <td class="p-5 text-center">
+                    <span class="${color} text-white px-4 py-2 rounded-full">
+                        ${risk}
+                    </span>
+                </td>
+                <td class="p-5 text-center">
+                    <button onclick=" window.location.href='view_user_telemetry.html?vehicle_id=${v.vehicle_id}'"
+                        class="bg-cyan-500 text-white px-4 py-2 rounded-xl">
+
+                        View
+
+                    </button>
+                </td>
+            </tr>
+            `;
+        });
+        document.getElementById( "riskTable").innerHTML=rows;
+    }
+    catch(e){
+        console.log(e);
+    }
+
+}
+
+
+loadRiskyVehicles();
+
+</script>
+
+</body>
+
+</html>

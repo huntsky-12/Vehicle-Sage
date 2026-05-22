@@ -1,0 +1,159 @@
+
+
+
+services:
+
+
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper
+    networks:
+      - app_net
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  # =======================
+  # Kafka (MISSING FROM YOUR FILE)
+  # =======================
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
+    networks:
+      - app_net
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # =======================
+  # Kafka UI
+  # =======================
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    networks:
+      - app_net
+    ports:
+      - "8081:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    depends_on:
+      - kafka
+
+  # =======================
+  # InfluxDB
+  # =======================
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    networks:
+      - app_net
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUX_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUX_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUX_TOKEN}
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUX_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUX_PASSWORD}
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+
+  # =======================
+  # FastAPI Backend
+  # =======================
+  backend:
+    build: .
+    container_name: backend
+    command: >
+      sh -c "until nc -z kafka 9092; do echo 'Waiting for Kafka...'; sleep 2; done;
+          uvicorn main_new:app --host 0.0.0.0 --port 8000 --reload"
+    networks:
+      - app_net
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=${INFLUX_TOKEN}
+      - INFLUXDB_ORG=${INFLUX_ORG}
+      - INFLUXDB_BUCKET=${INFLUX_BUCKET}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      - kafka
+      - influxdb
+  telemetry-consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile.consumer
+    networks:
+      - app_net
+    volumes:
+      - .:/app
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+      KAFKA_TOPIC: "telemetry_data"
+      INFLUX_URL: "http://influxdb:8086"
+      INFLUX_TOKEN: "${INFLUX_TOKEN}"
+      INFLUX_ORG: "${INFLUX_ORG}"
+      INFLUX_BUCKET: "${INFLUX_BUCKET}"
+    depends_on:
+      - kafka
+      - influxdb
+
+  # =======================
+  # Grafana
+  # ======================
+# ======================
+# Grafana
+# ======================
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+
+    networks:
+      - app_net
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin2004
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Viewer"
+      
+      GF_SMTP_ENABLED: "true"
+      GF_SMTP_HOST: ${GF_SMTP_HOST}
+      GF_SMTP_USER: ${GF_SMTP_USER}
+      GF_SMTP_PASSWORD: ${GF_SMTP_PASSWORD}
+      GF_SMTP_FROM_ADDRESS: yourgmail@gmail.com
+      GF_SMTP_FROM_NAME: Grafana
+
+    depends_on:
+      - influxdb
+
+    volumes:
+      - grafana_data:/var/lib/grafana
+networks:
+    app_net:
+      driver: bridge
+
+volumes:
+  influxdb_data:
+  grafana_data:

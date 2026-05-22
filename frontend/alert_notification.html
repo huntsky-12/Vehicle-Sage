@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Vehicle Sage - Notifications</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { background: #dbe3e8; font-family: 'Poppins', sans-serif; }
+    .panel { background: white; border-radius: 28px; box-shadow: 0 8px 30px rgba(0,0,0,.08); }
+  </style>
+</head>
+<body class="p-6">
+<div class="max-w-7xl mx-auto">
+
+  <div class="panel p-6 mb-6 flex justify-between items-center">
+    <div>
+      <h1 class="text-4xl font-bold">Alert Notifications</h1>
+      <p class="text-gray-400">Vehicle generated alerts</p>
+    </div>
+    <button onclick="loadAlerts()" class="bg-cyan-500 text-white px-5 py-3 rounded-xl">Refresh</button>
+  </div>
+
+  <div class="panel p-6">
+    <table class="w-full table-fixed">
+      <thead class="border-b text-gray-400">
+        <tr>
+          <th class="p-4 text-left">Vehicle</th>
+          <th class="p-4 text-center">Alert Type</th>
+          <th class="p-4 text-center">Severity</th>
+          <th class="p-4 text-left">Message</th>
+          <th class="p-4 text-center">Time</th>
+          <th class="p-4 text-center">Status</th>
+          <th class="p-4 text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody id="alertTable"></tbody>
+    </table>
+  </div>
+
+</div>
+<script>
+const severityColor = {
+    high: "bg-red-500",
+    medium: "bg-yellow-500",
+    critical: "bg-purple-600",
+    severe: "bg-red-700"
+};
+
+async function loadAlerts() {
+
+    try {
+
+        const token = localStorage.getItem("access_token");
+
+        const alerts = await fetch(
+            "http://localhost:8000/alerts",
+            {
+                headers: { Authorization: `Bearer ${token}` }
+            }
+        ).then(r => r.json());
+
+        document.getElementById("alertTable").innerHTML = alerts.map(a => `
+
+        <tr class="border-b hover:bg-gray-50 ${!a.is_read ? 'bg-blue-50' : ''}">
+
+            <td class="p-5">${a.vehicle_id}</td>
+
+            <td class="p-5 text-center">${a.alert_type}</td>
+
+            <td class="p-5 text-center">
+                <span class="${severityColor[a.severity.toLowerCase()] || 'bg-gray-500'} text-white px-4 py-2 rounded-full">
+                    ${a.severity}
+                </span>
+            </td>
+
+            <td class="p-5">${a.message}</td>
+
+            <td class="p-5 text-center">
+                ${new Date(a.created_at).toLocaleString()}
+            </td>
+
+            <td class="p-5 text-center">
+                <span class="${a.is_read ? 'bg-green-500' : 'bg-orange-500'} text-white px-4 py-2 rounded-full">
+                    ${a.is_read ? 'Read' : 'Unread'}
+                </span>
+            </td>
+
+            <td class="p-5 text-center">
+                ${
+                    !a.is_read
+                    ? `<button onclick="markRead(${a.id})" class="bg-cyan-500 text-white px-4 py-2 rounded-xl">Mark Read</button>`
+                    : `<span class="text-green-600 font-semibold">Alert Read</span>`
+                }
+            </td>
+
+        </tr>
+
+        `).join("");
+
+    }
+
+    catch(e) {
+
+        console.log(e);
+
+    }
+}
+async function markRead(id) {
+  try {
+    const token = localStorage.getItem("access_token");
+    await fetch(`http://localhost:8000/alerts/${id}/read`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    loadAlerts();
+  } catch (e) { console.log(e); }
+}
+
+  loadAlerts();
+  setInterval(loadAlerts, 5000);
+</script>
+</body>
+</html>

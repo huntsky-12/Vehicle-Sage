@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1"
+>
+
+<title>
+Vehicle Sage - Live Telemetry
+</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet"
+>
+
+<style>
+
+body{
+    background:#dbe3e8;
+    font-family:'Poppins',sans-serif;
+}
+
+.panel{
+    background:white;
+    border-radius:28px;
+    box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
+
+</style>
+
+</head>
+
+<body class="p-6">
+
+<div class="max-w-7xl mx-auto">
+
+    <div
+        class="panel p-6 mb-6"
+    >
+
+        <h1
+            class="text-4xl font-bold"
+        >
+            Live Telemetry Stream
+        </h1>
+
+        <p
+            class="text-gray-400"
+        >
+            Real-time vehicle updates
+        </p>
+
+    </div>
+
+
+
+    <div
+        class="panel p-6"
+    >
+
+        <table
+            class="w-full table-fixed"
+        >
+
+            <thead
+                class="border-b text-gray-400"
+            >
+
+                <tr>
+
+                    <th class="p-4 text-left">
+                        Vehicle
+                    </th>
+
+                    <th class="p-4 text-center">
+                        Speed
+                    </th>
+
+                    <th class="p-4 text-center">
+                        Fuel
+                    </th>
+
+                    <th class="p-4 text-center">
+                        Battery
+                    </th>
+
+                    <th class="p-4 text-center">
+                        Location
+                    </th>
+
+                    <th class="p-4 text-center">
+                        Timestamp
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody
+                id="telemetryTable"
+            >
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function loadLiveTelemetry(){
+
+    try{
+
+        const token=
+        localStorage.getItem(
+            "access_token"
+        );
+
+        const response=
+        await fetch(
+            "http://localhost:8000/live_telemetry",
+            {
+
+                headers:{
+
+                    Authorization:
+                    `Bearer ${token}`
+
+                }
+
+            }
+        );
+
+        const telemetry=
+        await response.json();
+
+        let rows='';
+
+        telemetry.forEach(t=>{
+
+            rows += `
+
+            <tr
+            class="border-b hover:bg-gray-50"
+            >
+
+                <td class="p-4">
+
+                    ${t.vehicle_id}
+
+                </td>
+
+                <td class="p-4 text-center">
+
+                    ${t.speed} km/h
+
+                </td>
+
+                <td class="p-4 text-center">
+
+                    ${t.fuel_level ?? "--"}%
+
+                </td>
+
+                <td class="p-4 text-center">
+
+                    ${t.battery_voltage ?? "--"}V
+
+                </td>
+
+                <td class="p-4 text-center">
+
+                    ${t.latitude},
+                    ${t.longitude}
+
+                </td>
+
+                <td class="p-4 text-center">
+
+                    ${new Date(
+                        t.timestamp
+                    ).toLocaleTimeString()}
+
+                </td>
+
+            </tr>
+
+            `;
+
+        });
+
+
+        document.getElementById(
+            "telemetryTable"
+        ).innerHTML=rows;
+
+    }
+
+    catch(e){
+
+        console.log(e);
+
+    }
+
+}
+
+
+loadLiveTelemetry();
+
+setInterval(
+
+    loadLiveTelemetry,
+
+    3000
+
+);
+
+</script>
+
+</body>
+
+</html>

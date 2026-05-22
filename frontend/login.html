@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vehicle Telemetry - Login</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body{
+      overflow:hidden;
+    }
+
+    .glass{
+      backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+
+<div class="w-full max-w-7xl rounded-3xl shadow-2xl bg-white grid grid-cols-1 md:grid-cols-2">
+    <!-- Left Side -->
+
+    <div class="relative">
+
+        <img
+        src="images/main-character.png"
+        class="w-[95%] object-contain z-10"
+        alt="Vehicle Sage">
+
+    </div>
+
+
+    <!-- Right Side -->
+<div class="flex justify-center items-center p-8">
+
+    <div class="w-full max-w-md">
+
+        <!-- Smaller heading -->
+        <h1 class="text-4xl font-bold text-center mb-8">
+            Login
+        </h1>
+
+
+        <!-- Email -->
+        <div class="mb-4">
+
+            <label class="block mb-2 text-gray-700 text-sm">
+                Username
+            </label>
+
+            <div class="relative">
+
+                <input
+                id="username"
+                type="text"
+                placeholder="Enter username"
+                class="w-full border rounded-xl p-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-cyan-400"
+                >
+
+                <span class="absolute right-4 top-3.5">
+                    ✉️
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- Password -->
+        <div class="mb-3">
+
+            <label class="block mb-2 text-gray-700 text-sm">
+                Password
+            </label>
+
+            <div class="relative">
+
+                <input
+                id="password"
+                type="password"
+                placeholder="Enter password"
+                class="w-full border rounded-xl p-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-cyan-400">
+                <button
+                type="button"
+                onclick="togglePassword()"
+                class="absolute right-4 top-3 text-lg"
+            >
+                <span id="eyeIcon">👁️</span>
+            </button>
+                
+
+                <!-- <span class="absolute right-4 top-3.5 cursor-pointer">
+                    👁
+                </span> -->
+
+            </div>
+
+        </div>
+
+
+        <div class="text-right mb-5">
+
+            <a href="#"
+            class="text-orange-400 text-sm hover:text-orange-500">
+
+                Forgot Password?
+
+            </a>
+
+        </div>
+
+
+        <!-- Login Button -->
+        <button
+        onclick="loginUser()"
+        class="w-full bg-cyan-400 hover:bg-cyan-500 text-white p-3 rounded-xl font-medium text-sm transition">
+
+            Log In
+
+        </button>
+
+
+        <!-- OR section -->
+        <div class="flex items-center my-5">
+
+            <hr class="flex-1">
+
+            <span class="px-4 text-gray-500 text-sm">
+                OR
+            </span>
+
+            <hr class="flex-1">
+
+        </div>
+
+
+        <!-- Social Buttons -->
+        <div class="space-y-3">
+
+            <button class="w-full border p-3 rounded-xl text-sm hover:bg-gray-50">
+                Continue with Google
+            </button>
+
+            <button class="w-full border p-3 rounded-xl text-sm hover:bg-gray-50">
+                Continue with Apple
+            </button>
+
+            <button class="w-full border p-3 rounded-xl text-sm hover:bg-gray-50">
+                Continue with Facebook
+            </button>
+
+        </div>
+
+
+        <p class="text-center text-gray-500 text-sm mt-5">
+
+            Don't have an account?
+
+            <a href="#" class="font-semibold text-cyan-500">
+                Sign Up
+            </a>
+
+        </p>
+       
+    </div>
+
+</div>
+
+</div>
+ <script>
+        async function loginUser(){
+            const username =
+                document.getElementById("username").value;
+            const password =
+                document.getElementById("password").value;
+            const formData = new URLSearchParams();
+            formData.append("username", username);
+            formData.append("password", password);
+            try{
+                console.log("Login started");
+                
+                const response = await fetch(
+                    "http://localhost:8000/User_Login",
+                    {
+                        method:"POST",
+                        headers:{
+                            "Content-Type":
+                            "application/x-www-form-urlencoded"
+                        },
+                        body:formData
+                    }
+                );
+                const data = await response.json();
+
+                console.log(data);
+
+                if(response.ok){
+
+                    localStorage.setItem(
+                        "access_token",
+                        data.access_token
+                    );
+
+                    localStorage.setItem(
+                        "role",
+                        data.role
+                    );
+
+                    console.log(
+                        "Role:",
+                        data.role
+                    );
+
+                    if(data.role === "admin"){
+
+                        window.location.href =
+                        "admin_dashboard.html";
+
+                        return;
+                    }
+
+                    window.location.href =
+                    "dashboard.html";
+                }
+                else{
+                    alert(
+                        data.detail ||
+                        "Invalid credentials"
+                    );
+                }
+            }
+            catch(error){
+                console.log(error);
+                alert(
+                    "Backend connection failed"
+                );
+            }
+        }
+
+
+        function togglePassword() {
+
+            const passwordInput =
+                document.getElementById("password");
+
+            const eyeIcon =
+                document.getElementById("eyeIcon");
+
+            if(passwordInput.type === "password")
+            {
+                passwordInput.type = "text";
+                eyeIcon.innerHTML = "🙈";
+            }
+            else
+            {
+                passwordInput.type = "password";
+                eyeIcon.innerHTML = "👁️";
+            }
+
+        }
+        </script>
+</body>
+</html>
+

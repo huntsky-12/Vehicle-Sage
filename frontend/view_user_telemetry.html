@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1"
+    >
+
+    <title>
+        Vehicle Sage - Telemetry
+    </title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Space+Grotesk:wght@600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body{
+            font-family:Poppins,sans-serif;
+            background:#edf2f7;
+        }
+
+        .logo{
+            font-family:'Space Grotesk';
+        }
+
+        .card{
+            transition:.3s;
+        }
+
+        .card:hover{
+
+            transform:translateY(-5px);
+
+            box-shadow:
+            0 15px 35px rgba(0,0,0,.08);
+
+        }
+
+    </style>
+
+</head>
+
+
+<body class="p-8">
+
+    <div class="max-w-7xl mx-auto">
+
+        <div
+            class="bg-white rounded-[30px] p-8 shadow mb-8"
+        >
+
+            <div class="flex justify-between">
+
+                <div>
+
+                    <h1 class="logo text-4xl">
+
+                        Vehicle Telemetry
+
+                    </h1>
+
+                    <p class="text-gray-400">
+
+                        Live Vehicle Diagnostics
+
+                    </p>
+
+                </div>
+
+
+                <button
+                    onclick="history.back()"
+                    class="bg-slate-900 text-white px-6 py-3 rounded-xl"
+                >
+
+                    Back
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div id="telemetryContainer">
+
+        </div>
+
+    </div>
+
+
+
+<script>
+
+async function loadTelemetry() {
+
+    try {
+
+        const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+        const vehicleId =
+        params.get(
+            "vehicle_id"
+        );
+
+
+        const token =
+        localStorage.getItem(
+            "access_token"
+        );
+
+
+        const response =
+        await fetch(
+            `http://localhost:8000/vehicle/${vehicleId}/telemetry`,
+            {
+                headers:{
+                    Authorization:
+                    `Bearer ${token}`
+                }
+            }
+        );
+
+
+        const telemetry =await response.json();
+
+        console.log(
+            "Telemetry response:",
+            telemetry
+        );
+
+
+        if(
+            !telemetry ||
+            telemetry.length===0
+        ){
+
+            document.getElementById(
+                "telemetryContainer"
+            ).innerHTML = `
+
+            <div class="bg-white rounded-3xl p-10 shadow text-center">
+
+                <h2 class="text-3xl font-bold">
+
+                    No Telemetry Data
+
+                </h2>
+
+                <p class="text-gray-400 mt-3">
+
+                    This vehicle has not sent telemetry yet.
+
+                </p>
+
+            </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        const t =
+        telemetry[0];
+        
+
+
+        document.getElementById(
+            "telemetryContainer"
+        ).innerHTML = `
+
+        <div class="grid grid-cols-4 gap-5 mb-8">
+
+            <div class="card bg-white p-6 rounded-3xl shadow">
+
+                <p class="text-gray-400">
+
+                    Speed
+
+                </p>
+
+                <h1 class="logo text-4xl">
+
+                    ${t.speed}
+
+                </h1>
+
+            </div>
+
+
+            <div class="card bg-white p-6 rounded-3xl shadow">
+
+                <p class="text-gray-400">
+
+                    Fuel
+
+                </p>
+
+                <h1 class="logo text-4xl">
+
+                    ${t.fuel_level ?? "--"}%
+
+                </h1>
+
+            </div>
+
+
+            <div class="card bg-white p-6 rounded-3xl shadow">
+
+                <p class="text-gray-400">
+
+                    Range
+
+                </p>
+
+                <h1 class="logo text-4xl">
+
+                    ${t.range_remaining ?? "--"}
+
+                </h1>
+
+            </div>
+
+
+            <div class="card bg-white p-6 rounded-3xl shadow">
+
+                <p class="text-gray-400">
+
+                    Battery
+
+                </p>
+
+                <h1 class="logo text-4xl">
+
+                    ${t.battery_voltage ?? "--"}V
+
+                </h1>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="grid grid-cols-2 gap-6">
+
+            <div class="card bg-white p-6 rounded-3xl shadow">
+
+                <h2 class="font-bold text-xl mb-5">
+
+                    Vehicle Health
+
+                </h2>
+
+
+                <div class="space-y-3">
+
+                    <div class="flex justify-between">
+
+                        <span>
+
+                            Engine Temp
+
+                        </span>
+
+                        <span>
+
+                            ${t.engine_temp ?? "--"} °C
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="flex justify-between">
+
+                        <span>
+
+                            Battery Temp
+
+                        </span>
+
+                        <span>
+
+                            ${t.battery_temp ?? "--"} °C
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="flex justify-between">
+
+                        <span>
+
+                            Motor Temp
+
+                        </span>
+
+                        <span>
+
+                            ${t.motor_temp ?? "--"} °C
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="flex justify-between">
+
+                        <span>
+
+                            Charging Status
+
+                        </span>
+
+                        <span>
+
+                            ${t.charging_status ?? "--"}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="card bg-white p-6 rounded-3xl shadow">
+
+                <h2 class="font-bold text-xl mb-5">
+
+                    Trip Analytics
+
+                </h2>
+
+
+                <div class="space-y-3">
+
+                    <div class="flex justify-between">
+
+                        <span>
+
+                            Odometer
+
+                        </span>
+
+                        <span>
+
+                            ${t.odometer}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="flex justify-between">
+
+                        <span>
+
+                            Trip Distance
+
+                        </span>
+
+                        <span>
+
+                            ${t.trip_distance}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="flex justify-between">
+
+                        <span>
+
+                            Idle Time
+
+                        </span>
+
+                        <span>
+
+                            ${t.idle_time}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="flex justify-between">
+
+                        <span>
+
+                            Altitude
+
+                        </span>
+
+                        <span>
+
+                            ${t.altitude ?? "--"}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    }
+
+    catch(err){
+
+        console.log(err);
+
+    }
+
+}
+
+loadTelemetry();
+
+</script>
+
+</body>
+
+</html>

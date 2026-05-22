@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vehicle Sage - Sign Up</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+overflow-x:hidden;
+}
+</style>
+
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+
+<div class="w-full max-w-7xl rounded-3xl shadow-2xl bg-white grid grid-cols-1 md:grid-cols-2">
+    <!-- Left Side -->
+
+    <div class="relative">
+
+    <img
+    src="images/main-character.png"
+    class="w-[95%] h-full"
+    alt="Vehicle Sage">
+
+</div>
+
+
+    <!-- Right Side -->
+
+    <div class="flex justify">
+
+        <div class="w-full max-w-md">
+
+            <h1 class="text-4xl font-bold text-center mb-4">
+                Create Account
+            </h1>
+
+            <p class="text-center text-gray-500 mb-6">
+                Join Vehicle Sage telemetry platform
+            </p>
+
+
+            <!-- Username -->
+
+            <div class="mb-4">
+
+                <label class="block mb-2 text-gray-700 text-sm">
+                    Username
+                </label>
+
+                <input
+                id="username"
+                type="text"
+                placeholder="Enter username"
+                class="w-full border rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-cyan-400">
+
+            </div>
+
+
+            <!-- Email -->
+
+            <div class="mb-4">
+
+                <label class="block mb-2 text-gray-700 text-sm">
+                    Email
+                </label>
+
+                <input
+                id="email"
+                type="email"
+                placeholder="Enter email"
+                class="w-full border rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-cyan-400">
+
+            </div>
+
+
+            <!-- Password -->
+
+            <div class="mb-4">
+
+                <label class="block mb-2 text-gray-700 text-sm">
+                    Password
+                </label>
+
+                <div class="relative">
+
+                    <input
+                    id="password"
+                    type="password"
+                    placeholder="Enter password"
+                    class="w-full border rounded-xl p-3 pr-12 text-sm outline-none focus:ring-2 focus:ring-cyan-400">
+
+                    <button
+                    type="button"
+                    onclick="togglePassword()"
+                    class="absolute right-4 top-3">
+
+                    <span id="eyeIcon">
+                    👁️
+                    </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Confirm Password -->
+
+            <div class="mb-5">
+
+                <label class="block mb-2 text-gray-700 text-sm">
+                    Confirm Password
+                </label>
+
+                <input
+                id="confirmPassword"
+                type="password"
+                placeholder="Confirm password"
+                class="w-full border rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-cyan-400">
+
+            </div>
+
+
+            <!-- Signup Button -->
+
+            <button
+            onclick="registerUser()"
+            class="w-full bg-cyan-400 hover:bg-cyan-500 text-white p-3 rounded-xl font-medium text-sm transition">
+
+                Create Account
+
+            </button>
+
+
+            <!-- OR -->
+
+            <div class="flex items-center my-5">
+
+                <hr class="flex-1">
+
+                <span class="px-4 text-gray-500 text-sm">
+
+                    OR
+
+                </span>
+
+                <hr class="flex-1">
+
+            </div>
+
+
+            <!-- Social Buttons -->
+
+            <div class="space-y-3">
+
+                <button class="w-full border p-3 rounded-xl text-sm hover:bg-gray-50">
+
+                    Continue with Google
+
+                </button>
+
+                <button class="w-full border p-3 rounded-xl text-sm hover:bg-gray-50">
+
+                    Continue with Apple
+
+                </button>
+
+                <button class="w-full border p-3 rounded-xl text-sm hover:bg-gray-50">
+
+                    Continue with Facebook
+
+                </button>
+
+            </div>
+
+
+            <p class="text-center text-gray-500 text-sm mt-5">
+
+                Already have an account?
+
+                <a
+                href="index.html"
+                class="font-semibold text-cyan-500">
+
+                    Login
+
+                </a>
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+function togglePassword(){
+
+const passwordInput=
+document.getElementById("password");
+
+const eyeIcon=
+document.getElementById("eyeIcon");
+
+if(passwordInput.type==="password")
+{
+    passwordInput.type="text";
+    eyeIcon.innerHTML="🙈";
+}
+else
+{
+    passwordInput.type="password";
+    eyeIcon.innerHTML="👁️";
+}
+
+}
+
+
+async function registerUser(){
+
+const username=
+document.getElementById("username").value;
+
+const email=
+document.getElementById("email").value;
+
+const password=
+document.getElementById("password").value;
+
+const confirmPassword=
+document.getElementById("confirmPassword").value;
+
+
+if(password!==confirmPassword){
+
+alert("Passwords do not match");
+
+return;
+
+}
+
+
+const userData={
+
+user_name:username,
+email:email,
+password:password
+
+};
+
+
+try{
+
+const response=await fetch(
+"http://localhost:8000/User_Registration",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(userData)
+}
+);
+
+const data=await response.json();
+
+alert(JSON.stringify(data,null,2));
+console.log(JSON.stringify(data,null,2));
+
+if(response.ok){
+
+alert("Account Created Successfully");
+
+window.location.href="login.html";
+
+}
+else{
+
+    alert(JSON.stringify(data,null,2));
+    console.log(JSON.stringify(data,null,2));
+
+}
+
+}
+catch(error){
+
+console.log(error);
+
+alert("Backend connection failed");
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Vehicle Sage Vehicles</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@700&display=swap"
+rel="stylesheet">
+
+<style>
+
+body{
+font-family:Poppins,sans-serif;
+background:#edf2f7;
+}
+
+.logo{
+font-family:'Space Grotesk';
+}
+
+.vehicleCard{
+transition:.3s;
+}
+
+.vehicleCard:hover{
+
+transform:translateY(-5px);
+
+box-shadow:
+0 15px 35px rgba(0,0,0,.08);
+
+}
+
+</style>
+
+</head>
+
+
+<body class="p-8">
+
+<div class="max-w-7xl mx-auto bg-white rounded-[30px] shadow-xl p-8">
+
+<!-- Header -->
+
+<div class="flex justify-between items-center mb-10">
+
+<div>
+
+<h1 class="logo text-4xl font-bold">
+
+Vehicles
+
+</h1>
+
+<p class="text-gray-400">
+
+Registered vehicles
+
+</p>
+
+</div>
+
+
+<div class="flex gap-3">
+
+<button
+
+class="bg-cyan-500 text-white px-6 py-3 rounded-xl" onclick="add_vehicle()">
+
+Add Vehicle
+
+</button>
+
+
+<div class="relative">
+
+    <button
+        onclick="toggleFilter()"
+        class="bg-slate-100 px-6 py-3 rounded-xl hover:bg-slate-200">
+
+        Filter
+
+    </button>
+
+    <div
+        id="filterMenu"
+        class="hidden absolute right-0 mt-2 bg-white rounded-xl shadow-lg w-44 z-50">
+
+        <div
+            onclick="filterVehicles('all')"
+            class="p-3 hover:bg-gray-100 cursor-pointer">
+
+            All Vehicles
+
+        </div>
+
+        <div
+            onclick="filterVehicles('ICE')"
+            class="p-3 hover:bg-gray-100 cursor-pointer">
+
+            ICE
+
+        </div>
+
+        <div
+            onclick="filterVehicles('EV')"
+            class="p-3 hover:bg-gray-100 cursor-pointer">
+
+            EV
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+    <div class="overflow-x-auto">
+
+    <table class="w-full">
+
+        <thead>
+
+            <tr class="border-b text-gray-400">
+
+                <th class="p-5 text-left">
+                Vehicle ID
+                </th>
+
+                <th class="p-5 text-left">
+                Model
+                </th>
+
+                <th class="p-5 text-left">
+                Type
+                </th>
+
+                <th class="p-5 text-left">
+                Class
+                </th>
+
+                <th class="p-5 text-left">
+                Year
+                </th>
+
+                <th class="p-5 text-center">
+                Actions
+                </th>
+
+            </tr>
+
+        </thead>
+
+    <tbody id="vehicleTable">
+
+    </tbody>
+
+    </table>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+let allVehicles = [];
+
+
+async function loadVehicles(){
+
+    try{
+        const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+        const userId =
+        params.get(
+            "user_id"
+        );
+
+        const token =
+        localStorage.getItem(
+            "access_token"
+        );
+
+        const response =
+        await fetch(
+            `http://localhost:8000/user_vehicles/?user_id=${userId}`,
+            {
+                headers:{
+                    Authorization:
+                    `Bearer ${token}`
+                }
+            }
+        );
+
+        const vehicles =
+        await response.json();
+
+        allVehicles = vehicles;
+
+        renderVehicles(
+            vehicles
+        );
+
+    }
+
+    catch(err){
+
+        console.log(err);
+
+    }
+
+}
+
+
+function renderVehicles(vehicles){
+
+    let rows='';
+
+    vehicles.forEach(v=>{
+
+        rows += `
+
+        <tr class="border-b hover:bg-gray-50">
+
+            <td class="p-5">
+                ${v.vehicle_id}
+            </td>
+
+            <td class="p-5">
+                ${v.vehicle_model}
+            </td>
+
+            <td class="p-5">
+                ${v.vehicle_type}
+            </td>
+
+            <td class="p-5">
+                ${v.vehicle_class}
+            </td>
+
+            <td class="p-5">
+                ${v.year_bought}
+            </td>
+
+            <td class="p-5 text-center">
+
+                <button
+                onclick="view_telemetry('${v.vehicle_id}')"
+                class="bg-cyan-500 text-white px-4 py-2 rounded-xl">
+
+                View
+
+                </button>
+                <button
+                class="bg-red-500 text-white px-4 py-2 rounded-xl" onclick="deleteVehicle('${v.vehicle_id}')">
+
+                Delete Vehicle
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById(
+        "vehicleTable"
+    ).innerHTML = rows;
+
+}
+
+
+
+function toggleFilter(){
+
+    document.getElementById(
+        "filterMenu"
+    ).classList.toggle(
+        "hidden"
+    );
+
+}
+
+
+function filterVehicles(category){
+
+    if(category==="all"){
+
+        renderVehicles(
+            allVehicles
+        );
+
+        return;
+
+    }
+
+    const filtered =
+    allVehicles.filter(v =>
+
+        v.vehicle_type===category ||
+
+        v.vehicle_class===category
+
+    );
+
+    renderVehicles(
+        filtered
+    );
+
+    document.getElementById(
+        "filterMenu"
+    ).classList.add(
+        "hidden"
+    );
+
+}
+
+
+
+async function view_telemetry(vehicle_id) {
+    try{
+        window.location.href=`view_user_telemetry.html?vehicle_id=${vehicle_id}`
+    }catch(e){
+        console.log(e)
+    }
+}
+
+async function deleteVehicle(vehicleId){
+
+    try{
+        const confirmDelete =
+        confirm(
+            `Delete vehicle ${vehicleId}?`
+        );
+        if(!confirmDelete ){
+            return;
+        }
+
+        const token =localStorage.getItem("access_token");
+
+        const response =await fetch(`http://localhost:8000/vehicle/${vehicleId}`,{
+                method:"DELETE",
+                headers:{
+                    Authorization:
+                    `Bearer ${token}`
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if(response.ok){
+            alert("Vehicle deleted successfully");
+            loadVehicles();
+        }
+        else{
+            alert(
+                data.detail ||
+                "Delete failed"
+            );
+        }
+    }
+    catch(err){
+        console.log(err);
+        alert("Backend connection failed");
+    }
+}
+
+function add_vehicle(){
+
+    const params=
+    new URLSearchParams(
+        window.location.search
+    );
+
+    const userId=
+    params.get(
+        "user_id"
+    );
+
+    window.location.href=
+    `register_vehicle.html?user_id=${userId}`;
+}
+
+loadVehicles();
+
+</script>
+
+</body>
+</html>

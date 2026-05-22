@@ -1,0 +1,34 @@
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Database
+*.db
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker
+grafana-storage/
+influxdb_data/
+
+# Alembic cache
+alembic/__pycache__/
+
+# Node
+node_modules/
+
+
+.txt

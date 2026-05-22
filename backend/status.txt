@@ -1,0 +1,109 @@
+so the update is the pipe line is working properly... 
+swaggerui is bit faulty so u can see the vehicle added to a onwer using 
+curl -X GET "http://localhost:8000/my_vehicles" ^ -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5ZDgzM2JmZi0yYTdhLTQ5MzMtYjlhYi0yYzMyMDVlYjEwNzMifQ.5OFJsy4wJLXzsTErxTqS45LDxQIM99FZ-8RufKOgmK4" ^ -H "Content-Type: application/json"
+
+
+
+what next we have to do... is work on frontend and its integration... also look for how telemetry data is continuously being saved in the db///\
+
+
+
+
+Recently i made it....     
+i have updated the system with oauth... , now i want to add the RBAC, this is to ensure that only admin gets access to details of all 
+user while the other users can continue their usual login and checking...
+For RBAC , what i have thought is to never ask the user for the role in the form and once he has been updated in the system,
+their role can be directly updated from database... register them as user and then update to admin through database directly.....
+
+
+and also i hve added a backend alert system... it is only for fuel_status, engine_temp, speeding...
+
+
+
+to do:
+
+Add Prometheus
+Add Grafana for Dashboard
+Make the frontend...
+Add map for live location..... 
+we have to call api... that we will say later
+
+What Else???    
+
+
+
+
+username: madmax
+password: dududu
+
+
+In swagger UI everything is working.... no updates as of now....  
+
+
+
+
+
+So SIYONARA 
+
+
+
+
+
+
+date: 16/05/2026
+
+
+ i need to update the piprline for RBAc, but i was not able to update the db as its sqlalchmey 
+ and using model i can only create a table if its not there for obivious reasons
+
+ So my approach is to use alembic.. which allows to modify the table on the go.....
+
+
+
+okay... i have updated the user table with the feature role...
+it i have an admin create: 
+admin_username : madmax
+password:  dududu
+
+
+ setup is 
+ pip install alembic
+
+
+ {
+  "user_name": "testusr1",
+  "email": "usr2@example.com",
+  "password": "testusr",
+  "timestamp": "2026-05-16T14:52:20.311Z",
+  "vehicles_registered": [
+    "string"
+  ]
+}
+
+ {
+  "user_name": "testusr2",
+  "email": "usr2@example.com",
+  "password": "testusr2",
+  "timestamp": "2026-05-16T14:52:20.311Z",
+  "vehicles_registered": [
+    "string"
+  ]
+}
+
+
+17/5/26    2:48am
+
+Made login page,signup and a static html dashboard page... 
+what i have to do is to make dashboard dynamic and make page for utility
+
+and with this its a goog night
+
+SIYONARA
+
+
+
+18/5/26   3:00 am
+
+worked alot...
+almost done with admin dashboard... has to make some adjustment here and there.., and then work on user dashboard...
+we will tommorow in the day...
